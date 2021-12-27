@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="favicon.png" />
+
+    <title>clients</title>
+
+   <!-- Bootstrap core CSS -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap theme -->
+    <link href="css/bootstrap-theme.min.css" rel="stylesheet">
+   
+
+    
+     <link rel="stylesheet" href="css/style.css" rel="stylesheet">
+     <link rel="stylesheet" href="css/Normalize.css" rel="stylesheet">
+     <link rel="stylesheet" href="css/font-awesome/css/font-awesome.min.css">
+
+
+   
+
+      <script src="js/jquery-1.11.3.min.js"></script>
+
+    
+
+     
+        
+  </head>
+<body>
+
+
+<?php 
+require 'connect.php';
+include 'nav.php'; ?> 
+
+
+
+
+<div class="container mainbg">
+<br><a class="return" href="index.php"><i class="glyphicon glyphicon-arrow-left"></i> Retour</a>
+
+    <h1 class="h1_title">Déposer votre Candidature</h1>
+    <hr> <br>
+
+<?php 
+if (isset($_POST['submit'])) {  
+  $nom_clients=htmlspecialchars($_POST['nom']);
+  $prenom_clients=htmlspecialchars($_POST['prenom']);
+  $sexe_clients=htmlspecialchars($_POST['sexe']);
+  $adr_clients=htmlspecialchars($_POST['adr']);
+  $tel_clients=htmlspecialchars($_POST['tel']);
+  $description=htmlspecialchars($_POST['description']);
+  $motivation=htmlspecialchars($_POST['motivation']);
+  $ins_clients = $connect->prepare("INSERT INTO clients(nom_clients, prenom_clients, sexe_clients, adr_clients, tel_clients, description, motivation)VALUES(:nom_clients , :prenom_clients, :sexe_clients, :adr_clients, :tel_clients, :description, :motivation)");
+
+        $ins_clients->bindParam(":nom_clients", $nom_clients);
+        $ins_clients->bindParam(":prenom_clients", $prenom_clients);
+        $ins_clients->bindParam(":sexe_clients", $sexe_clients);   
+        $ins_clients->bindParam(":adr_clients", $adr_clients);
+        $ins_clients->bindParam(":tel_clients", $tel_clients);
+        $ins_clients->bindParam(":description", $description);
+        $ins_clients->bindParam(":motivation", $motivation);
+
+  $ins_clients->execute();
+  if (isset($ins_clients)){
+    echo "<div class='alert alert-success center' style='width: 90%; margin: auto;'><p>Ajout avec sucees</p></div><br><br>
+	<meta http-equiv='refresh' content='6; url = clients.php' />
+	"; 
+  }
+
+  else {
+   echo "<div class='alert alert-danger center' style='width: 90%; margin: auto;'><p>Error d'ajout</p></div><br><br>";     
+  }
+
+
+ } 
+
+?>
+
+    <div class="clear"></div>
+    <div class="row col-md-10 col-md-offset-1">
+
+      <form id="formID" action="" method="post">
+          
+              <label class="">Nom : <span style="color:red; font-weight: bold; font-family: Arial, sans-serif ;">(*)</span></label><br>
+              <div class="input-group">
+                  <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span><br>
+                  <input name="nom" type="text" placeholder="" class="form-control validate[required]" />
+              </div><br>
+               <label class="">Prenom : <span style="color:red; font-weight: bold; font-family: Arial, sans-serif ;">(*)</span></label><br>
+              <div class="input-group">
+                  <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
+                  <input name="prenom" type="text" placeholder="" class="form-control validate[required]" />
+              </div><br>
+               <label class="">Sexe : <span style="color:red; font-weight: bold; font-family: Arial, sans-serif ;">(*)</span></label><br>
+              <div class="input-group">
+                  <span class="input-group-addon"><i class="glyphicon glyphicon-list"></i></span>
+                  <select name="sexe" class="form-control">
+                  <option>Seclectionner</option>
+                  <option>M</option>
+                  <option>F</option>
+                  </select>
+              </div><br>
+               <label class="">Adresse Email: <span style="color:red; font-weight: bold; font-family: Arial, sans-serif ;">(*)</span></label><br>
+              <div class="input-group"><br>
+                  <span class="input-group-addon"><i class="glyphicon glyphicon-book"></i></span>
+                  <input name="adr" type="text" placeholder="" class="form-control validate[required]" />
+              </div><br>
+               <label class="">Tel : <span style="color:red; font-weight: bold; font-family: Arial, sans-serif ;">(*)</span></label><br>
+              <div class="input-group"><br>
+                  <span class="input-group-addon"><i class="glyphicon glyphicon-book"></i></span>
+                  <input name="tel" type="text" placeholder="" class="form-control validate[required]" />
+              </div>
+              <br>
+               <div>
+                 <label for="file">Coller votre Curriculum Vitea :<span style="color:red; font-weight: bold; font-family: Arial, sans-serif ;">(*)</span></label><br>
+                 <textarea name="description"  multiple class="form-control validate[required]"> </textarea>
+                
+               </div>
+                <br>
+                <div>
+                <label for="file">Coller votre lettre de motivation :<span style="color:red; font-weight: bold; font-family: Arial, sans-serif ;">(*)</span></label><br>
+                 <textarea name="motivation"  multiple class="form-control validate[required]"> </textarea>
+                
+               </div><br>
+          <button type="submit" name="submit" class="mybtn mybtn-success">Postuler</button>
+         
+
+          <hr id='success'>
+
+      </form>
+  
+  </div>
+
+<div class="clear"></div>
+<?php 
+if (isset($_GET['cat_delete']) ) {
+
+$cat_id = $_GET['cat_delete'];
+
+ $stmt_delete = $connect->prepare("DELETE FROM clients WHERE clients.id_clients=:id_clients");
+  $stmt_delete->bindParam (':id_clients' , $id_clients , PDO::PARAM_STR );
+  $stmt_delete->execute();
+
+  if (isset($stmt_delete)) {
+    echo "<div class='alert alert-success center' style='width: 90%; margin: auto;'><p>vous avez supprimé avec succés</p></div><br><br>"; 
+    echo '<script type="text/javascript"> window.location.href += "#success"; </script>';
+    echo "<meta http-equiv='refresh' content='5; url = clients.php' />";
+  }
+  
+}
+
+
+ ?>
+<?php
+
+   echo"il fait  "; 
+$date = gmdate("H\hi"); 
+echo $date; // aller je le laisse pour le plaisir de tjs savoir l'heure
+ echo"la liste des candidats selectionné sont:";
+?>
+    <table class="table table-striped table-bordered">
+          <tr class="tr-table">
+            <th>Numero</th>
+            <th>Nom</th>
+            <th>Prenom</th>
+            <th>Sexe</th>
+            <th>Email</th>
+            <th colspan="2">Operation</th>
+          </tr>
+<?php 
+
+  $stmt_find_class = $connect->prepare("SELECT * FROM clients");
+  $stmt_find_class->execute();
+
+  while ($find_class_row = $stmt_find_class->fetch()) {
+      $fetch_class_numeric = $find_class_row ['id_clients'];
+      $fetch_class_name = $find_class_row ['nom_clients'];
+      $fetch_class_pname = $find_class_row ['prenom_clients'];
+      $fetch_class_sname = $find_class_row ['sexe_clients'];
+     $fetch_class_adrname = $find_class_row ['adr_clients'];
+
+
+
+?>
+            <tr>
+              <td><?php echo $fetch_class_numeric;  ?></td>
+              <td><?php echo $fetch_class_name;  ?></td>
+              <td><?php echo $fetch_class_pname;  ?></td>
+              <td><?php echo $fetch_class_sname;  ?></td>
+              <td><?php echo $fetch_class_adrname;  ?></td>
+              <td><a href="?cat_delete=<?PHP echo $fetch_class_numeric; ?>"><i class="glyphicon glyphicon-trash large" style="font-size:26px"></i></a></td>
+               <td><a href="#"><i class="glyphicon glyphicon-pencil large"></i></a></td> 
+            
+<?php } ?>
+                 
+        </tr>        
+      </table>
+
+      <br>                    
+        </body>
+</html>
